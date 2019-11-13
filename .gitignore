@@ -122,3 +122,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/datasets/KID_memory/
+/datasets/GA_sequences.p
+/datasets/KID_memory.zip
