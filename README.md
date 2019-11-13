@@ -69,7 +69,7 @@ This means the lever that controls the tendon can be at one of two angles (excep
 </p><br>
 
 ## Action Sequences
-My first thought for how to generate a specific sequence of actions was to pick a starting state, a desired end state, and a random sequence of actions, then sequentially feed the actions into the forward model to generate next states. This would eventually generate a "final state" that I could compare to the actual desired final state. Since the whole model is differentiable, I figured I could just fix the model weights and use backpropagation to modify the action sequence, treating them as parameters of a model. This is diagramed in **Figure 8**.<br>
+My first thought for how to generate a specific sequence of actions was to pick a starting state, a desired end state, and a random sequence of actions, then sequentially feed the actions into the forward model to generate next states. This would eventually generate a "final state" that I could compare to the actual desired final state. Since the whole model is differentiable, I figured I could just fix the model weights and use backpropagation to modify the action sequence, treating them as parameters of a model. This is diagramed in **Figure 8**. The loss function is shown in **Figure 9**.
 
 <p align="center">
   Figure 8
@@ -78,34 +78,41 @@ My first thought for how to generate a specific sequence of actions was to pick 
   <img src="diagrams/sequence_diagram.JPG" width="50%" height="50%">
 </p>
 
-This sort of worked, though very often the optimization process would get stuck in what I assumed were local minima. At this point, I could have done a couple of things, one of which was to figure out if something about the learned representations was faulty or the model had some issues with exploding or vanishing gradients, since I was now essentially treating my feedforward model like a recurrent neural network, and it was possible that some otherwise minor behavior was being amplified by repeated application of the network. Instead of doing that, I just decided to use a genetic algorithm to select sequences. The sequences weren't so long (only about 4 or 5 steps) that this was an impossible tasks, and I was actually able to get it work. The genetic algorithm was very simple, no crossover or anything fancy. I'd just take a whole population of sequences of actions, put them through the learned forward model, evaluate their performance with the loss function *L*, rank them and throw away the terrible solutions, then mutate the survivors by adding white noise to them, allowing successful parents to remain in the population, as shown in **Figure 9**. In **Figure 10** you can see an example result of this process, successfully finding a sequence of actions that results in bending the whole finger.<br>
-
 <p align="center">
   Figure 9
+</p>
+<p align="center">
+  <img src="diagrams/loss_function.JPG" width="50%" height="50%">
+</p>
+
+This sort of worked, though very often the optimization process would get stuck in what I assumed were local minima. At this point, I could have done a couple of things, one of which was to figure out if something about the learned representations was faulty or the model had some issues with exploding or vanishing gradients, since I was now essentially treating my feedforward model like a recurrent neural network, and it was possible that some otherwise minor behavior was being amplified by repeated application of the network. Instead of doing that, I just decided to use a genetic algorithm to select sequences. The sequences weren't so long (only about 4 or 5 steps) that this was an impossible tasks, and I was actually able to get it work. The genetic algorithm was very simple, no crossover or anything fancy. I'd just take a whole population of sequences of actions, put them through the learned forward model, evaluate their performance with the loss function *L*, rank them and throw away the terrible solutions, then mutate the survivors by adding white noise to them, allowing successful parents to remain in the population, as shown in **Figure 10**. In **Figure 11** you can see an example result of this process, successfully finding a sequence of actions that results in bending the whole finger.<br>
+
+<p align="center">
+  Figure 10
 </p>
 <p align="center">
   <img src="diagrams/genetic_algorithm.JPG" width="50%" height="50%">
 </p>
 
 <p align="center">
-  Figure 10
+  Figure 11
 </p>
 <p align="center">
   <img src="diagrams/sequence_example.png" width="50%" height="50%">
 </p><br>
 
 ## Behavior
-Now, this is all pretty fun, but the genetic algorithm takes a bit of time to actually produce these action sequences. I've also been thinking a lot about what behavior is. For a long time I'd sort of abstractly thought of behavior as "just a sequence of physical actions". However, I've realized that this is a pretty brittle way of defining a behavior, because it makes it very natural to think along the lines of "executing" a behavior sequence, and just letting it run it's course, which makes it difficult to factor in how feedback from the environment should influence behavior on-line. Rather, a behavior is probably much more fruitfully thought of as a stable linkage between the sensory inputs and motor outputs. That is, if you thought of an entire organisms linked to it's environment as a dynamical system, you could think of a "behavior" as a specific parameterization of that organisms coupling to its environment. Thinking along these lines, I decided that what I'd do is use the genetic algorithm to create a whole new dataset of state sequences, progressing from a "start" sequence to a "target" sequence. Then, what I'd do is train a new neural network parameterized by the target state (which I'm thinking of as parameterizing the "behavior", which explicitly links a behavior to a goal) such that given the current state, it returns the next state. In the diagram in **Figure 11**, this network is represented by *ϕ*. Then, after *ϕ* has generate the next state, *K\** can generate the action that will produce that state. What this should produce is a system which can correct itself, because even if there's some external perturbation to the system, *ϕ* will always know how to move the system closer to pt. I've already collected this dataset, but still have to train the network. I visualize the result as being something like a parameterize vector field (e.g. **Figure 12**), where the entire behavior *is* the vector field, and the behavior is parameterized by a continuous "goal" variable.<br>
+Now, this is all pretty fun, but the genetic algorithm takes a bit of time to actually produce these action sequences. I've also been thinking a lot about what behavior is. For a long time I'd sort of abstractly thought of behavior as "just a sequence of physical actions". However, I've realized that this is a pretty brittle way of defining a behavior, because it makes it very natural to think along the lines of "executing" a behavior sequence, and just letting it run it's course, which makes it difficult to factor in how feedback from the environment should influence behavior on-line. Rather, a behavior is probably much more fruitfully thought of as a stable linkage between the sensory inputs and motor outputs. That is, if you thought of an entire organisms linked to it's environment as a dynamical system, you could think of a "behavior" as a specific parameterization of that organisms coupling to its environment. Thinking along these lines, I decided that what I'd do is use the genetic algorithm to create a whole new dataset of state sequences, progressing from a "start" sequence to a "target" sequence. Then, what I'd do is train a new neural network parameterized by the target state (which I'm thinking of as parameterizing the "behavior", which explicitly links a behavior to a goal) such that given the current state, it returns the next state. In the diagram in **Figure 12**, this network is represented by *ϕ*. Then, after *ϕ* has generate the next state, *K\** can generate the action that will produce that state. What this should produce is a system which can correct itself, because even if there's some external perturbation to the system, *ϕ* will always know how to move the system closer to pt. I've already collected this dataset, but still have to train the network. I visualize the result as being something like a parameterize vector field (e.g. **Figure 13**), where the entire behavior *is* the vector field, and the behavior is parameterized by a continuous "goal" variable.<br>
 
 <p align="center">
-  Figure 11
+  Figure 12
 </p>
 <p align="center">
   <img src="diagrams/behavioral_model.JPG" width="50%" height="50%">
 </p>
 
 <p align="center">
-  Figure 12
+  Figure 13
 </p>
 <p align="center">
   <img src="diagrams/vector_field.png" width="50%" height="50%">
