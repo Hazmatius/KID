@@ -7,14 +7,6 @@ import utils as utils
 import torch.nn.functional as F
 
 
-def downsample(x):
-    x[:, :, 1::2, ::2] = x[:, :, ::2, ::2]
-    x[:, :, ::2, 1::2] = x[:, :, ::2, ::2]
-    x[:, :, 1::2, 1::2] = x[:, :, ::2, ::2]
-    # x[:, :, ::2+1, ::2+1] = 0
-    return x
-
-
 def get_batch_params(x):
     batch_size = x.shape[0]
     bessel = (batch_size - 1) / batch_size
@@ -334,6 +326,9 @@ class Mind_of_KID(nn.Module):
         return model
 
 
+# Behavioral model
+# takes in a target state, a current state, and returns the "next" state
+# the next state is the state the agent should move to in order to eventually achieve the target state
 class StateSeqModel(nn.Module):
     def __init__(self, **kwargs):
         super(self, StateSeqModel, self).__init__()

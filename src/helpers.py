@@ -14,7 +14,7 @@ import modules
 
 
 import utils as utils
-import mibi_dataloader
+import dataloader
 import criteria
 
 
@@ -219,7 +219,7 @@ class Trial:
 
     @staticmethod
     def error_check(config, dataset_path, model_class):
-        dataset = mibi_dataloader.MIBIData.depickle(dataset_path)
+        dataset = dataloader.MIBIData.depickle(dataset_path)
         param_pass = True
         # test that model params were valid
         try:
@@ -259,7 +259,7 @@ class Trial:
 
     def train(self):
         if not self.done:
-            train_ds = mibi_dataloader.MIBIData.depickle(self.config['dataset_params']['train_ds_path'])
+            train_ds = dataloader.MIBIData.depickle(self.config['dataset_params']['train_ds_path'])
             self.training_time = self.trainer.train(
                 self.model,
                 train_ds,
@@ -270,7 +270,7 @@ class Trial:
 
     def test(self):
         if not self.done:
-            test_ds = mibi_dataloader.MIBIData.depickle(self.config['dataset_params']['test_ds_path'])
+            test_ds = dataloader.MIBIData.depickle(self.config['dataset_params']['test_ds_path'])
             Trainer.test(
                 self.model,
                 test_ds,

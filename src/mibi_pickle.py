@@ -2,7 +2,7 @@ import sys
 import json
 import os
 import copy
-import mibi_dataloader
+import dataloader
 
 json_file = sys.argv[1]
 with open(json_file) as json_data:
@@ -29,8 +29,8 @@ if 'labels' in dataset_params:
     train_ds_params['labels'] = dataset_params['labels']
     test_ds_params['labels'] = dataset_params['labels']
 
-train_ds = mibi_dataloader.MIBIData(**copy.deepcopy(train_ds_params))
-test_ds = mibi_dataloader.MIBIData(**copy.deepcopy(test_ds_params))
+train_ds = dataloader.MIBIData(**copy.deepcopy(train_ds_params))
+test_ds = dataloader.MIBIData(**copy.deepcopy(test_ds_params))
 train_ds_path = output_params['hyper_dir'] + 'datasets/train_ds.pickle'
 test_ds_path = output_params['hyper_dir'] + 'datasets/test_ds.pickle'
 
