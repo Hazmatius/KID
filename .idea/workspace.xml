@@ -4,8 +4,11 @@
     <list default="true" id="f5969785-f1a9-45d5-9501-62edd072b97d" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/genetic_algorithm.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/genetic_algorithm.ipynb" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/kinematics_model.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/kinematics_model.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/criteria.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/criteria.py" afterDir="false" />
+=======
+>>>>>>> master
       <change beforePath="$PROJECT_DIR$/src/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/helpers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mibi_dataloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/dataloader.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/mibi_pickle.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mibi_pickle.py" afterDir="false" />
