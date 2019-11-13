@@ -98,7 +98,7 @@ This sort of worked, though very often the optimization process would get stuck 
   Figure 11
 </p>
 <p align="center">
-  <img src="diagrams/sequence_example.png" width="50%" height="50%">
+  <img src="diagrams/sequence_example.png" width="100%" height="100%">
 </p><br>
 
 ## Behavior
