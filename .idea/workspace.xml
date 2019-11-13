@@ -2,11 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f5969785-f1a9-45d5-9501-62edd072b97d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/kid_ga.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/KID_Mind.ipynb" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/genetic_algorithm.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/genetic_algorithm.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kinematics_model.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/kinematics_model.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/criteria.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/criteria.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/helpers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/helpers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mibi_dataloader.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/dataloader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/mibi_pickle.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/mibi_pickle.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/modules.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/modules.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />

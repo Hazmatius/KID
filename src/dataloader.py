@@ -305,17 +305,19 @@ class KID_Data:
 
 
 class Sequence_Data:
-    def __init__(self, **kwargs):
+    def __init__(self, dataset_path):
         if torch.cuda.is_available():
             self.device = 'cuda'
         else:
             self.device = 'cpu'
 
-        self.r_target = kwargs['r_target']
-        self.p_t = kwargs['p_t']
-        self.p_next = kwargs['p_next']
+        dataset = pickle.load(open(dataset_path, 'rb'))
 
-        self.num_points = self.imgs.size()[0]
+        self.r_target = dataset['r_target']
+        self.p_t = dataset['p_t']
+        self.p_next = dataset['p_next']
+
+        self.num_points = len(self.p_t)
         self.r_size = 3
         self.p_size = 9
 
@@ -349,7 +351,7 @@ class Sequence_Data:
         self.sample_queue = np.random.permutation(int(self.num_points))
 
     def get_epoch_length(self):
-        return len(self.imgs)-1
+        return len(self.p_t)-1
 
     def get_samples(self, sample_indices):
         samples = {
@@ -362,7 +364,7 @@ class Sequence_Data:
             j = sample_indices[i]
             samples['r_target'][i] = self.get_r_target(j)
             samples['p_t'][i] = self.get_p_t(j)
-            samples['p_next'] = self.get_p_next(j)
+            samples['p_next'][i] = self.get_p_next(j)
 
         return samples
 

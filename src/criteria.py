@@ -11,6 +11,15 @@ Part of what we need to fix is the way that the model learns spatial representat
 '''
 
 
+class BeehiveLoss(nn.Module):
+    def __init__(self, **kwargs):
+        super(BeehiveLoss, self).__init__()
+        self.recon_criterion = nn.MSELoss()
+
+    def forward(self, **kwargs):
+        loss = self.recon_criterion(kwargs['p_next'], kwargs['_p_next'])
+        return {'loss': loss}
+
 class KIDEyeLoss(nn.Module):
     def __init__(self, **kwargs):
         super(KIDEyeLoss, self).__init__()

@@ -7,14 +7,6 @@ import utils as utils
 import torch.nn.functional as F
 
 
-def downsample(x):
-    x[:, :, 1::2, ::2] = x[:, :, ::2, ::2]
-    x[:, :, ::2, 1::2] = x[:, :, ::2, ::2]
-    x[:, :, 1::2, 1::2] = x[:, :, ::2, ::2]
-    # x[:, :, ::2+1, ::2+1] = 0
-    return x
-
-
 def get_batch_params(x):
     batch_size = x.shape[0]
     bessel = (batch_size - 1) / batch_size
@@ -334,9 +326,12 @@ class Mind_of_KID(nn.Module):
         return model
 
 
+# Behavioral model
+# takes in a target state, a current state, and returns the "next" state
+# the next state is the state the agent should move to in order to eventually achieve the target state
 class StateSeqModel(nn.Module):
     def __init__(self, **kwargs):
-        super(self, StateSeqModel, self).__init__()
+        super(StateSeqModel, self).__init__()
 
         self.config = kwargs
         self.start_epoch = 0
@@ -358,14 +353,65 @@ class StateSeqModel(nn.Module):
         return p_next
 
 
-# class KID_Mover(nn.Module):
-#     def __init__(self, **kwargs):
-#         super(KID_Mover, self).__init__()
-#
-#         self.config = kwargs
-#         self.start_epoch = 0
-#
-#
+class Beehive(nn.Module):
+    def __init__(self, **kwargs):
+        super(Beehive, self).__init__()
+
+        self.config = kwargs
+        self.start_epoch = 0
+
+        self.fc1 = nn.Linear(9+3, 9+6)
+        self.bn1 = nn.BatchNorm1d(9+6, affine=False)
+        self.fc2 = nn.Linear(9+6, 9+3)
+        self.bn2 = nn.BatchNorm1d(9+3, affine=False)
+        self.fc3 = nn.Linear(9+3, 9)
+        self.bn3 = nn.BatchNorm1d(9)
+        self.prelu = nn.PReLU()
+        self.tanh = nn.Tanh()
+
+    def forward(self, **mvars):
+        # encode sensory states
+        p_t = mvars['p_t']
+        r_target = mvars['r_target']
+        _p_next = torch.cat([p_t, r_target], 1)
+        _p_next = self.prelu(self.bn1(self.fc1(_p_next)))
+        _p_next = self.prelu(self.bn2(self.fc2(_p_next)))
+        _p_next = self.tanh(self.bn3(self.fc3(_p_next)))
+
+        mvars['_p_next'] = _p_next
+        return mvars
+
+    def save(self, apath, file='model_latest.pt'):
+        save_dirs = [os.path.join(apath, file)]
+
+        for s in save_dirs:
+            torch.save(self.state_dict(), s)
+
+    def save_model(self, path, filename):
+        model = {
+            'model': Mind_of_KID,
+            'config': self.config,
+            'state_dict': self.state_dict(),
+        }
+        torch.save(model, path + filename)
+
+    def load(self, apath, file='model_latest.pt', resume=-1):
+        load_from = None
+        kwargs = {}
+        if resume == -1:
+            load_from = torch.load(os.path.join(apath, file), **kwargs)
+        if load_from:
+            self.load_state_dict(load_from, strict=False)
+
+    @staticmethod
+    def load_model(path, filename):
+        if torch.cuda.is_available():
+            checkpoint = torch.load(path + filename, map_location='cuda')
+        else:
+            checkpoint = torch.load(path + filename, map_location='cpu')
+        model = checkpoint['model'](**checkpoint['config'])
+        model.load_state_dict(checkpoint['state_dict'])
+        return model
 
 
 class KID_Eye(nn.Module):
